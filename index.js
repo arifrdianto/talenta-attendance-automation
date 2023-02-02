@@ -38,8 +38,7 @@ const PUBLIC_HOLIDAYS = [
 ];
 
 const main = async () => {
-  const isHeadless =
-    (process.env.HEADLESS_BROWSER ?? "true") === "true" ? true : false;
+  const isHeadless = (process.env.HEADLESS_BROWSER ?? "true") === "true" ? true : false;
 
   const TODAY = dayjs().tz("Asia/Jakarta").format("D MMM YYYY");
 
@@ -78,10 +77,7 @@ const main = async () => {
   await page.fill("#user_password", process.env.ACCOUNT_PASSWORD);
 
   console.log("Signing in...");
-  await Promise.all([
-    page.click("#new-signin-button"),
-    page.waitForNavigation(),
-  ]);
+  await Promise.all([page.click("#new-signin-button"), page.waitForNavigation()]);
 
   const dashboardNav = page.getByText("Dashboard");
   // check if dashboard nav is exist
@@ -90,9 +86,7 @@ const main = async () => {
   }
 
   const myName = (await page.locator("#navbar-name").textContent()).trim();
-  const whoIsOffToday = await page
-    .locator(".tl-card-small", { hasText: `Who's Off` })
-    .innerText();
+  const whoIsOffToday = await page.locator(".tl-card-small", { hasText: `Who's Off` }).innerText();
 
   const isOffToday = whoIsOffToday.includes(myName);
 
@@ -105,22 +99,16 @@ const main = async () => {
   // go to "My Attendance Logs"
   await page.click("text=My Attendance Logs");
   await page.waitForSelector(`h3:text("${myName}")`);
-  console.log(
-    "Already inside My Attendance Logs to check holiday or day-off..."
-  );
+  console.log("Already inside My Attendance Logs to check holiday or day-off...");
 
   const rowToday = page.locator("tr", { hasText: TODAY }).first();
 
-  const columnCheckDayOff = await rowToday
-    .locator("td:nth-child(2)")
-    .innerText();
+  const columnCheckDayOff = await rowToday.locator("td:nth-child(2)").innerText();
 
-  const columnCheckOnLeave = await rowToday
-    .locator("td:nth-child(7)")
-    .innerText();
+  const columnCheckOnLeave = await rowToday.locator("td:nth-child(7)").innerText();
 
   // N = not dayoff/holiday
-  const isTodayHoliday = columnCheckDayOff.trim() !== "N";
+  const isTodayHoliday = columnCheckDayOff.trim() !== "Working Period";
 
   // CT = cuti
   const isTodayOnLeave = columnCheckOnLeave.trim() === "CT";
@@ -137,10 +125,7 @@ const main = async () => {
     return;
   }
 
-  await Promise.all([
-    page.goto("https://hr.talenta.co/live-attendance"),
-    page.waitForNavigation(),
-  ]);
+  await Promise.all([page.goto("https://hr.talenta.co/live-attendance"), page.waitForNavigation()]);
 
   console.log("Already inside Live Attendance Page...");
 
